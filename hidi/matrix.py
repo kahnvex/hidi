@@ -8,6 +8,7 @@ from hidi.linalg import dot
 from pyvalid import accepts
 from scipy.sparse import csr_matrix
 from sklearn.decomposition import TruncatedSVD
+from sklearn.model_selection import train_test_split
 
 # Catch annoying warnings from nimfa
 with warnings.catch_warnings():
@@ -139,6 +140,61 @@ class ItemsMatrixToDFTransform(Transform):
         to be used as the index for the DataFrame.
         """
         return pd.DataFrame(M, index=items), kwargs
+
+
+class KerasEvaluationTransform(Transform):
+    """
+    Generalized transform for Keras algorithm
+    """
+    def __init__(self, BaselineModel, validation_matrix, tts_seed=42,
+                 **keras_kwargs):
+        self.BaselineModel = BaselineModel
+        # seed, epochs, batch_size, verbose, cross_validation(boolean)
+        self.keras_kwargs = keras_kwargs
+        # labeled dataset for modeling and evaluation: item, labels
+        self.validation_matrix = validation_matrix
+        self.tts_seed = tts_seed
+
+        if 'item_id' in validation_matrix.columns:
+            self.validation_matrix.set_index('item_id', inplace=True)
+
+    def transform(self, M,  **kwargs):
+        """
+        Takes a numpy ndarray-like object and applies a Keras model to it.
+        """
+        # clean data
+        rows, columns = M.shape
+        embedding = M.merge(self.validation_matrix, left_index=True,
+                            right_index=True)
+        embedding = embedding.values
+
+        # split dataset
+        x_train, x_test, y_train, y_test = train_test_split(
+            embedding[:, :columns], embedding[:, columns:],
+            random_state=self.tts_seed)
+
+        model = self.BaselineModel()
+        model.fit(x_train, y_train, validation_data=[x_test, y_test],
+                  **self.keras_kwargs)
+
+        return model, kwargs
+
+
+class KerasPredictionTransform(Transform):
+    """
+    Generalized transform for Keras algorithm
+    """
+    def __init__(self, model):
+        self.model = model
+        # the model is the model output from KerasEvaluationTransform
+
+    def transform(self, M,  **kwargs):
+        """
+        Takes a numpy ndarray-like object and applies a SkLearn
+        algorithm to it.
+        """
+        predictions = self.model.predict(M)  # M is the ndarray-like object
+        return predictions, kwargs
 
 
 class SkLearnTransform(Transform):
