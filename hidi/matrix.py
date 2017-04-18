@@ -8,6 +8,7 @@ from hidi.linalg import dot
 from pyvalid import accepts
 from scipy.sparse import csr_matrix
 from sklearn.decomposition import TruncatedSVD
+from sklearn.model_selection import train_test_split
 
 # Catch annoying warnings from nimfa
 with warnings.catch_warnings():
