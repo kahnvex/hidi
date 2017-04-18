@@ -46,7 +46,7 @@ class SimilarityTransform(Transform):
     def __init__(self, axis=0):
         self.axis = axis
 
-    def transform(self, M, items=[], links=[], **kwargs):
+    def transform(self, M, items, links, **kwargs):
         M_T = M.transpose()
 
         if self.axis == 0:
@@ -133,7 +133,7 @@ class ItemsMatrixToDFTransform(Transform):
     """
     Create a Pandas DataFrame object with items as the index.
     """
-    def transform(self, M, items=[], **kwargs):
+    def transform(self, M, items, **kwargs):
         """
         Takes a numpy ndarray-like object and a list of item identifiers
         to be used as the index for the DataFrame.
