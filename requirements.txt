@@ -9,3 +9,4 @@ scikit-learn>=0.17.0
 pyvalid>=0.6
 pandas>=0.17.0
 nimfa>=1.1.0
+futures>=3.1.0
