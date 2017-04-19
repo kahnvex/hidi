@@ -56,7 +56,7 @@ To install HiDi, simply run
 Run the Tests
 -------------
 
-..code-block:: bash
+.. code-block:: bash
 
    $ pip install tox
    $ tox
