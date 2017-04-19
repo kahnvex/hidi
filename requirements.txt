@@ -1,3 +1,4 @@
 Sphinx==1.5.5
 sphinx-autobuild==0.6.0
 tox==2.7.0
+sphinxcontrib-fulltoc==1.2.0
