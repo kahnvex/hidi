@@ -27,6 +27,7 @@ setup(
     description='High-dimensional embedding generation library',
     author='Vevo Engineering',
     author_email='engineering@vevo.com',
+    url='https://github.com/vevo/hidi',
     packages=find_packages(exclude=['tests', 'tests.*']),
     install_requires=get_install_requires(),
     tests_require=[
@@ -34,5 +35,11 @@ setup(
         'Sphinx==1.5.5',
         'sphinx-autobuild==0.6.0',
         'tox==2.7.0',
-    ]
+    ],
+    classifiers=[
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.4', 
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6'
+    ],
 )
