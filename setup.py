@@ -1,5 +1,6 @@
 import sys
 
+from codecs import open
 from distutils.core import setup
 from setuptools import find_packages
 
@@ -21,10 +22,16 @@ def get_install_requires():
     return requires
 
 
+with open('README.rst', 'r', 'utf-8') as f:
+    readme = f.read()
+
+
 setup(
     name='HiDi',
     version='0.0.1',
     description='High-dimensional embedding generation library',
+    long_description=readme,
+    license='ALv2',
     author='Vevo Engineering',
     author_email='engineering@vevo.com',
     url='https://github.com/vevo/hidi',
