@@ -21,12 +21,12 @@ class TestKeraModelEvaluation(unittest.TestCase):
         self.validation.index.name = 'items'
 
     def test_baselinemodel_fit_is_called_once(self):
-        t = KerasEvaluationTransform(Mock, self.validation)
+        t = KerasEvaluationTransform(Mock(), self.validation)
         model, _ = t.transform(self.M)
         self.assertEqual(1, model.fit.call_count)
 
     def test_baselinemodel_fit_call_args_shape(self):
-        t = KerasEvaluationTransform(Mock, self.validation)
+        t = KerasEvaluationTransform(Mock(), self.validation)
         model, _ = t.transform(self.M)
         x_train, y_train = model.fit.call_args[0]
         self.assertEqual(x_train.shape, (7500, 6))

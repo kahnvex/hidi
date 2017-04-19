@@ -178,7 +178,7 @@ class KerasEvaluationTransform(Transform):
             x_train, y_train, validation_data=[x_test, y_test],
             **self.keras_kwargs)
 
-        return model, kwargs
+        return self.keras_model, kwargs
 
 
 class KerasPredictionTransform(Transform):
