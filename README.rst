@@ -4,6 +4,8 @@ HiDi: Pipelines for Embeddings
 HiDi is a library for high-dimensional embedding generation for collaborative
 filtering applications.
 
+Read the `full documentation<http://hidi.rtfd.io/>`_.
+
 How Do I Use It?
 ----------------
 
