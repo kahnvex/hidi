@@ -2,3 +2,10 @@ Sphinx==1.5.5
 sphinx-autobuild==0.6.0
 tox==2.7.0
 sphinxcontrib-fulltoc==1.2.0
+scipy>=0.16.0
+tqdm>=4.0.0
+numpy>=1.8.0
+scikit-learn>=0.17.0
+pyvalid>=0.6
+pandas>=0.17.0
+nimfa>=1.1.0
