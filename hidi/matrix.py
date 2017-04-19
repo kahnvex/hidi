@@ -146,15 +146,15 @@ class KerasEvaluationTransform(Transform):
     """
     Generalized transform for Keras algorithm
 
-    This transform takes a Keras sequential model, a validation matrix and 
+    This transform takes a Keras sequential model, a validation matrix and
     its keyword arugments upon initialization.
 
     The Keras squential model is documented here:
     https://keras.io/getting-started/sequential-model-guide/
 
-    A validation matrix is a dataframe that has :code:`item_id` index, other 
-    'label' columns. It will be inner joined with the M matrix and then fed into
-    the Keras sequential model.
+    A validation matrix is a dataframe that has :code:`item_id` index, other
+    'label' columns. It will be inner joined with the M matrix and then fed
+    into the Keras sequential model.
     """
     def __init__(self, BaselineModel, validation_matrix, tts_seed=42,
                  **keras_kwargs):
@@ -168,8 +168,9 @@ class KerasEvaluationTransform(Transform):
 
     def transform(self, M,  **kwargs):
         """
-        Takes a Takes a dataframe that has :code:`item_id` index, other 'features'
-        columns for prediction, and applies a Keras sequential model to it.
+        Takes a Takes a dataframe that has :code:`item_id` index, other
+        'features' columns for prediction, and applies a Keras sequential
+        model to it.
 
         Returns a trained Keras model and its keyword arguments
 
