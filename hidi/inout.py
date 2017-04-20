@@ -13,7 +13,7 @@ class ReadTransform(Transform):
     :code:`score`. If score is not provided, it we be
     defaulted to one. :code:`link_id` represents to the
     "user" and `item_id` represents the "item" in the context
-    of traditional collaborative filtering userXitem speak.
+    of traditional collaborative filtering.
 
     :param infiles:
         Array of paths to csv documents to be loaded
