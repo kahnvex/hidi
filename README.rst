@@ -1,6 +1,9 @@
 HiDi: Pipelines for Embeddings
 ==============================
 
+.. image:: https://circleci.com/gh/VEVO/hidi/tree/master.svg?style=svg
+   :target: https://circleci.com/gh/VEVO/hidi/tree/master
+
 HiDi is a library for high-dimensional embedding generation for collaborative
 filtering applications.
 
