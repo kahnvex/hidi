@@ -22,11 +22,17 @@ class ApplyTransform(Transform):
 
     Takes a single argument, `fn`, which must be a function
     accepting one argument (the function to apply), and kwargs.
+
+    :param fn: The function to be applied to transform input.
+    :type fn: function
     """
     def __init__(self, fn):
         self.fn = fn
 
     def transform(self, x, **kwargs):
+        """
+        :param x: The input to the function :code:`fn`.
+        """
         return self.fn(x, **kwargs), kwargs
 
 
@@ -42,12 +48,27 @@ class SimilarityTransform(Transform):
     The transform function returns a tuple containing the
     similarity matrix, and the links or items, depending on
     the axis.
+
+    :param axis: The axis to perform the dot product for.
+    :type axis: int[0,1]
     """
 
     def __init__(self, axis=0):
         self.axis = axis
 
     def transform(self, M, items, links, **kwargs):
+        """
+        :param M: The matrix to create a similarity matrix from
+        :type M: numpy ndarray-like
+
+        :param items: Array of :code:`item_ids` in the same order
+            that they appear in :code:`M`.
+        :type items: array
+
+        :param links: Array of :code:`link_ids` in the same order
+            that they appear in :code:`M`.
+        :type links: array
+        """
         M_T = M.transpose()
 
         if self.axis == 0:
@@ -145,13 +166,23 @@ class ItemsMatrixToDFTransform(Transform):
 class KerasEvaluationTransform(Transform):
     """
     Generalized transform for Keras algorithm
+
+    This transform takes a Keras sequential model, a validation matrix and
+    its keyword arugments upon initialization.
+
+    The Keras squential model is documented here:
+    https://keras.io/getting-started/sequential-model-guide/
+
+    A validation matrix is a dataframe that has :code:`item_id` index, other
+    'label' columns. It will be inner joined with the M matrix and then fed
+    into the Keras sequential model.
     """
+
     def __init__(self, keras_model, validation_matrix, tts_seed=42,
                  tt_split=0.25, **keras_kwargs):
         self.keras_model = keras_model
         # seed, epochs, batch_size, verbose, cross_validation(boolean)
         self.keras_kwargs = keras_kwargs
-        # labeled dataset for modeling and evaluation: item, labels
         self.validation_matrix = validation_matrix
         self.tts_seed = tts_seed
         self.tt_split = tt_split
@@ -161,15 +192,18 @@ class KerasEvaluationTransform(Transform):
 
     def transform(self, M,  **kwargs):
         """
-        Takes a numpy ndarray-like object and applies a Keras model to it.
+        Takes a Takes a dataframe that has :code:`item_id` index, other
+        'features' columns for prediction, and applies a Keras sequential
+        model to it.
+
+        Returns a trained Keras model and its keyword arguments
+
         """
-        # clean data
         rows, columns = M.shape
         embedding = M.merge(self.validation_matrix, left_index=True,
                             right_index=True)
         embedding = embedding.values
 
-        # split dataset
         x_train, x_test, y_train, y_test = train_test_split(
             embedding[:, :columns], embedding[:, columns:],
             random_state=self.tts_seed, test_size=self.tt_split)
@@ -183,16 +217,20 @@ class KerasEvaluationTransform(Transform):
 
 class KerasPredictionTransform(Transform):
     """
-    Generalized transform for Keras algorithm
+    Generalized transform for Keras model prediction
+
+    This transform takes a trained Keras model. It applies the train model
+    to the input when :code:`transform` is called.
     """
     def __init__(self, model):
         self.model = model
-        # the model is the model output from KerasEvaluationTransform
 
     def transform(self, M,  **kwargs):
         """
-        Takes a numpy ndarray-like object and applies a SkLearn
-        algorithm to it.
+        Takes a numpy ndarray-like object and applies a trained Keras model
+        to it.
+
+        Returns the predictions from the trained Keras model
         """
         predictions = self.model.predict(M)  # M is the ndarray-like object
         return predictions, kwargs
