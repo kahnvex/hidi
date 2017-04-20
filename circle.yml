@@ -1,8 +1,8 @@
 dependencies:
   override:
     - pip install -U pip
-    - make ci-deps
+    - make ci-test-deps
 
 test:
   override:
-    - make ci
+    - make ci-test
