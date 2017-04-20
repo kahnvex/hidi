@@ -24,15 +24,19 @@ class ThreadForkTransform(ExecutorFork):
     Fork a pipeline using :code:`concurrent.futures.ThreadPoolExecutor`
     as a backend for execution.
 
-    This transform takes a list of Pipeline instances upon
-    initialization.
-
     This is useful if you have several transforms that perform well
     when running in concurrent threads such as IO heavy or CPU heavy
     tasks that execute outside the Python runtime.
 
     The forked transform will return a list of Pipeline outputs,
     in the same order as the forked pipelines were given.
+
+    :param pipelines: An array of pipelines to fork execution to.
+    :type pipelines: list[hidi.pipeline.Pipeline]
+
+    :param progress: When True, progress of the forked pipelines
+        will be logged.
+    :type progress: bool
     """
     def transform(self, io, **kwargs):
         return self.executor_fork(ThreadPoolExecutor, io, **kwargs)
@@ -43,8 +47,6 @@ class ProcessForkTransform(ExecutorFork):
     Fork a pipeline using :code:`concurrent.futures.ProcessesPoolExecutor`
     as a backend for execution.
 
-    This transform takes a list of Pipeline instances upon initialization.
-
     This method is useful if you have several transforms that
     can be executed concurrently and are CPU intensive.
 
@@ -53,6 +55,13 @@ class ProcessForkTransform(ExecutorFork):
 
     Special care must be taken as each transform must be pickled
     to a new process.
+
+    :param pipelines: An array of pipelines to fork execution to.
+    :type pipelines: list[hidi.pipeline.Pipeline]
+
+    :param progress: When True, progress of the forked pipelines
+        will be logged.
+    :type progress: bool
     """
     def transform(self, io, **kwargs):
         return self.executor_fork(ProcessPoolExecutor, io, **kwargs)
@@ -61,6 +70,13 @@ class ProcessForkTransform(ExecutorFork):
 class TrivialForkTransform(Transform):
     """
     Trivial Fork Transform using an ordinary loop.
+
+    :param pipelines: An array of pipelines to fork execution to.
+    :type pipelines: list[hidi.pipeline.Pipeline]
+
+    :param progress: When True, progress of the forked pipelines
+        will be logged.
+    :type progress: bool
     """
     def __init__(self, pipelines, progress=False):
         self.pipelines = pipelines
