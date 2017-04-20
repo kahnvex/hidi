@@ -22,11 +22,17 @@ class ApplyTransform(Transform):
 
     Takes a single argument, `fn`, which must be a function
     accepting one argument (the function to apply), and kwargs.
+
+    :param fn: The function to be applied to transform input.
+    :type fn: function
     """
     def __init__(self, fn):
         self.fn = fn
 
     def transform(self, x, **kwargs):
+        """
+        :param x: The input to the function :code:`fn`.
+        """
         return self.fn(x, **kwargs), kwargs
 
 
@@ -42,12 +48,27 @@ class SimilarityTransform(Transform):
     The transform function returns a tuple containing the
     similarity matrix, and the links or items, depending on
     the axis.
+
+    :param axis: The axis to perform the dot product for.
+    :type axis: int[0,1]
     """
 
     def __init__(self, axis=0):
         self.axis = axis
 
     def transform(self, M, items, links, **kwargs):
+        """
+        :param M: The matrix to create a similarity matrix from
+        :type M: numpy ndarray-like
+
+        :param items: Array of :code:`item_ids` in the same order
+            that they appear in :code:`M`.
+        :type items: array
+
+        :param links: Array of :code:`link_ids` in the same order
+            that they appear in :code:`M`.
+        :type links: array
+        """
         M_T = M.transpose()
 
         if self.axis == 0:
