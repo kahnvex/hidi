@@ -17,5 +17,5 @@ transforms = [
     inout.WriteTransform(outfile)       # Write results to csv
 ]
 
-pipeline = pipeline.Pipeline(transforms)
-pipeline.run()
+pl = pipeline.Pipeline(transforms)
+pl.run()

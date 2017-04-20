@@ -57,7 +57,7 @@ master_doc = 'index'
 # General information about the project.
 project = u'HiDi'
 copyright = u'2017, Vevo Engineering'
-author = u'Jarrod Kahn Jennifer Zhao'
+author = u'Vevo Engineering'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -131,15 +131,6 @@ latex_elements = {
     #
     # 'figure_align': 'htbp',
 }
-
-# Grouping the document tree into LaTeX files. List of tuples
-# (source start file, target name, title,
-#  author, documentclass [howto, manual, or own class]).
-latex_documents = [
-    (master_doc, 'HiDi.tex', u'HiDi Documentation',
-     u'Jarrod Kahn Jennifer Zhao', 'manual'),
-]
-
 
 # -- Options for manual page output ---------------------------------------
 

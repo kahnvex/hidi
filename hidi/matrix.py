@@ -156,12 +156,15 @@ class KerasEvaluationTransform(Transform):
     'label' columns. It will be inner joined with the M matrix and then fed
     into the Keras sequential model.
     """
-    def __init__(self, BaselineModel, validation_matrix, tts_seed=42,
-                 **keras_kwargs):
-        self.BaselineModel = BaselineModel
+
+    def __init__(self, keras_model, validation_matrix, tts_seed=42,
+                 tt_split=0.25, **keras_kwargs):
+        self.keras_model = keras_model
+        # seed, epochs, batch_size, verbose, cross_validation(boolean)
         self.keras_kwargs = keras_kwargs
         self.validation_matrix = validation_matrix
         self.tts_seed = tts_seed
+        self.tt_split = tt_split
 
         if 'item_id' in validation_matrix.columns:
             self.validation_matrix.set_index('item_id', inplace=True)
@@ -182,13 +185,13 @@ class KerasEvaluationTransform(Transform):
 
         x_train, x_test, y_train, y_test = train_test_split(
             embedding[:, :columns], embedding[:, columns:],
-            random_state=self.tts_seed)
+            random_state=self.tts_seed, test_size=self.tt_split)
 
-        model = self.BaselineModel()
-        model.fit(x_train, y_train, validation_data=[x_test, y_test],
-                  **self.keras_kwargs)
+        self.keras_model.fit(
+            x_train, y_train, validation_data=[x_test, y_test],
+            **self.keras_kwargs)
 
-        return model, kwargs
+        return self.keras_model, kwargs
 
 
 class KerasPredictionTransform(Transform):

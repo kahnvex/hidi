@@ -1,5 +1,6 @@
 import sys
 
+from codecs import open
 from distutils.core import setup
 from setuptools import find_packages
 
@@ -21,12 +22,19 @@ def get_install_requires():
     return requires
 
 
+with open('README.rst', 'r', 'utf-8') as f:
+    readme = f.read()
+
+
 setup(
     name='HiDi',
-    version='0.0.1',
+    version='0.0.2',
     description='High-dimensional embedding generation library',
+    long_description=readme,
+    license='ALv2',
     author='Vevo Engineering',
     author_email='engineering@vevo.com',
+    url='https://github.com/vevo/hidi',
     packages=find_packages(exclude=['tests', 'tests.*']),
     install_requires=get_install_requires(),
     tests_require=[
@@ -34,5 +42,11 @@ setup(
         'Sphinx==1.5.5',
         'sphinx-autobuild==0.6.0',
         'tox==2.7.0',
-    ]
+    ],
+    classifiers=[
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.4', 
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6'
+    ],
 )
