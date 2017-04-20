@@ -14,6 +14,14 @@ class ReadTransform(Transform):
     defaulted to one. :code:`link_id` represents to the
     "user" and `item_id` represents the "item" in the context
     of traditional collaborative filtering userXitem speak.
+
+    :param infiles:
+        Array of paths to csv documents to be loaded
+        and concatenated into one DataFrame. Each csv
+        document must have a :code:`link_id` and a
+        :code:`item_id` column. An optional
+        :code:`score` column may also be supplied.
+    :type infiles: array
     """
 
     def __init__(self, infiles, **kwargs):
@@ -40,12 +48,13 @@ class WriteTransform(Transform):
     """
     Write output to disk in csv or json formats.
 
-    Parameters:
-        `outfile`: A string that is a path to the desired
+    :param outfile: A string that is a path to the desired
         output on the file system.
+    :type outfile: str
 
-        `file_format`: A string that is a file extension,
+    :param file_format: A string that is a file extension,
         either :code:`json` or :code:`csv`.
+    :type file_format: str
     """
 
     def __init__(self, outfile, file_format='csv',
@@ -55,17 +64,24 @@ class WriteTransform(Transform):
         self.link_key = link_key
         self.encoding = enc
 
-    def transform(self, embeddings, **kwargs):
+    def transform(self, df, **kwargs):
+        """
+        Write a DataFrame to a file.
+
+        :param df: The Pandas DataFrame to be written to a
+            file
+        :type df: pandas.DataFrame
+        """
         if self.file_format == 'csv':
-            embeddings.to_csv(self.outfile, encoding=self.encoding)
+            df.to_csv(self.outfile, encoding=self.encoding)
         else:
             with open(self.outfile, 'w+') as f:
                 import json
-                for row in embeddings.iterrows():
+                for row in df.iterrows():
                     f.write(json.dumps({
                         self.link_key: row[0],
                         'embedding': row[1].tolist()
                     }))
                     f.write('\n')
 
-        return embeddings, kwargs
+        return df, kwargs
