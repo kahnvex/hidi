@@ -92,6 +92,12 @@ class ScalarTransform(Transform):
     the scaler transform will try to call a function by that name on
     the matrix, if it is a function reference, scaler transform will
     call that function with the matrix as input.
+
+    :param fn: The scalar function to use. If :cod:`fn` is a string
+        then an attribute of that name will be looked up and called.
+        If :code:`fn` is a function, that function will be called
+        with the input given to transform.
+    :type fn: str | function
     """
 
     def __init__(self, fn=np.log):
@@ -128,6 +134,11 @@ class SparseTransform(Transform):
         :code:`score` columns.
 
         Returns a SciPy :code:`csr_matrix`.
+
+        :param df: The DataFrame to make a sparse matrix from. Must have
+            :code:`link_id`, :code:`item_id`, and :code:`score` columns.
+        :type df: pandas.DataFrame
+        :rtype: scipy.sparse.csr_matrix
         """
         link_u = list(df.link_id.unique())
         item_u = list(df.item_id.unique())
