@@ -233,7 +233,7 @@ class KerasKfoldTransform(Transform):
     evaluation
     """
     def __init__(self, keras_model, validation_matrix, tensorboard_log_dir,
-                 tts_seed=42, tt_split=0.25, kfold_n_splits=10, 
+                 tts_seed=42, tt_split=0.25, kfold_n_splits=10,
                  kfold_seed=42, kfold_shuffle=True,
                  classification=False, **keras_kwargs):
         self.keras_model = keras_model
