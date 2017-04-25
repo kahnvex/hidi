@@ -226,6 +226,7 @@ class KerasEvaluationTransform(Transform):
 
         return self.keras_model, kwargs
 
+
 class KerasKfoldTransform(Transform):
     """
     Generalized transform for Keras algorithm with k fold cross validation
@@ -249,7 +250,7 @@ class KerasKfoldTransform(Transform):
         self.log_dir = log_dir
 
         self.classification = classification
-        
+
         if 'item_id' in validation_matrix.columns:
             self.validation_matrix.set_index('item_id', inplace=True)
 
@@ -294,7 +295,7 @@ class KerasKfoldTransform(Transform):
                 os.makedirs(newfile_path)
             for file in files:
                 if file.startswith('event'):
-                    move(os.path.join(self.log_dir,file), 
+                    move(os.path.join(self.log_dir, file),
                          newfile_path)
 
             n_fold += 1
