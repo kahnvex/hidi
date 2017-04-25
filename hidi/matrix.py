@@ -247,7 +247,7 @@ class KerasKfoldTransform(Transform):
         self.tts_seed = tts_seed
         self.tt_split = tt_split
 
-        self.log_dir = log_dir
+        self.log_dir = tensorboard_log_dir
 
         self.classification = classification
 
