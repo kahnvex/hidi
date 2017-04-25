@@ -234,9 +234,8 @@ class KerasKfoldTransform(Transform):
     """
     def __init__(self, keras_model, validation_matrix, tts_seed=42,
                  tt_split=0.25, kfold_n_splits=10, kfold_seed=42,
-                 kfold_shuffle=True, log_dir='./logs/kfold/{0}_fold',
-                 tensorboard_hist_freq=0,
-                 **keras_kwargs):
+                 kfold_shuffle=True, log_dir='./logs/kfold/',
+                 classification=False, **keras_kwargs):
         self.keras_model = keras_model
         self.keras_kwargs = keras_kwargs
         self.validation_matrix = validation_matrix
@@ -249,7 +248,6 @@ class KerasKfoldTransform(Transform):
         self.tt_split = tt_split
 
         self.log_dir = log_dir
-        self.tensorboard_hist_freq = tensorboard_hist_freq
 
         if 'item_id' in validation_matrix.columns:
             self.validation_matrix.set_index('item_id', inplace=True)
