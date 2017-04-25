@@ -288,6 +288,15 @@ class KerasKfoldTransform(Transform):
                 validation_data=[x_test, y_test],
                 **self.keras_kwargs)
 
+            files = os.listdir(self.log_dir)
+            newfile_path = os.path.join(self.log_dir,
+                                        '{0}_fold'.format(n_fold))
+            if not os.path.exists(newfile_path):
+                os.makedirs(newfile_path)
+            for file in files:
+                if file.startswith('event'):
+                    move(os.path.join(self.log_dir,file), 
+                         newfile_path)
 
             n_fold += 1
 
