@@ -249,6 +249,8 @@ class KerasKfoldTransform(Transform):
 
         self.log_dir = log_dir
 
+        self.classification = classification
+        
         if 'item_id' in validation_matrix.columns:
             self.validation_matrix.set_index('item_id', inplace=True)
 
@@ -270,85 +272,23 @@ class KerasKfoldTransform(Transform):
             embedding[:, :columns], embedding[:, columns:],
             random_state=self.tts_seed, test_size=self.tt_split)
 
-        kfold = KFold(n_splits=self.kfold_n_splits,
-                      random_state=self.kfold_seed,
-                      shuffle=self.kfold_shuffle)
+        if self.classification:
+            kfold = StratifiedKFold(n_splits=self.kfold_n_splits,
+                                    random_state=self.kfold_seed,
+                                    shuffle=self.kfold_shuffle)
+        else:
+            kfold = KFold(n_splits=self.kfold_n_splits,
+                          random_state=self.kfold_seed,
+                          shuffle=self.kfold_shuffle)
 
         n_fold = 1
         for train_index, test_index in kfold.split(x_train, y_train):
             self.keras_model.fit(
                 x_train[train_index], y_train[test_index],
                 validation_data=[x_test, y_test],
-                callbacks=[TensorBoard(log_dir=self.log_dir.format(n_fold),
-                            histogram_freq=self.tensorboard_hist_freq)],
-                            **self.keras_kwargs)
-            n_fold+=1
-            n_fold += 1
-
-        return None
+                **self.keras_kwargs)
 
 
-class KerasStratifiedKfoldTransform(Transform):
-    """
-    Generalized transform for Keras algorithm with stratified k fold
-    cross validation evaluation for classification
-
-    The model will be evaluated using tensorboard and returns None
-
-    """
-
-    def __init__(self, keras_model, validation_matrix, tts_seed=42,
-                 tt_split=0.25, kfold_n_splits=10, kfold_seed=42,
-                 kfold_shuffle=True, log_dir='./logs/kfold/{0}_fold',
-                 tensorboard_hist_freq=0,
-                 **keras_kwargs):
-        self.keras_model = keras_model
-        self.keras_kwargs = keras_kwargs
-        self.validation_matrix = validation_matrix
-
-        self.kfold_n_splits = kfold_n_splits
-        self.kfold_seed = kfold_seed
-        self.kfold_shuffle = kfold_shuffle
-
-        self.tts_seed = tts_seed
-        self.tt_split = tt_split
-
-        self.log_dir = log_dir
-        self.tensorboard_hist_freq = tensorboard_hist_freq
-
-        if 'item_id' in validation_matrix.columns:
-            self.validation_matrix.set_index('item_id', inplace=True)
-
-    def transform(self, M,  **kwargs):
-        """
-        Takes a Takes a dataframe that has :code:`item_id` index, other
-        'features' columns for prediction, and applies a Keras sequential
-        model to it.
-
-
-        """
-        rows, columns = M.shape
-        embedding = M.merge(self.validation_matrix, left_index=True,
-                            right_index=True)
-        embedding = embedding.values
-
-        x_train, x_test, y_train, y_test = train_test_split(
-            embedding[:, :columns], embedding[:, columns:],
-            random_state=self.tts_seed, test_size=self.tt_split)
-
-        kfold = StratifiedKFold(n_splits=self.kfold_n_splits,
-                                random_state=self.kfold_seed,
-                                shuffle=self.kfold_shuffle)
-
-        n_fold = 1
-        for train_index, test_index in kfold.split(x_train, y_train):
-            self.keras_model.fit(
-                x_train[train_index], y_train[test_index],
-                validation_data=[x_test, y_test],
-                callbacks=[TensorBoard(log_dir=self.log_dir.format(n_fold),
-                            histogram_freq=self.tensorboard_hist_freq)],
-                            **self.keras_kwargs)
-            n_fold+=1
             n_fold += 1
 
         return None
