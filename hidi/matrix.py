@@ -192,7 +192,6 @@ class KerasEvaluationTransform(Transform):
     def __init__(self, keras_model, validation_matrix, tts_seed=42,
                  tt_split=0.25, **keras_kwargs):
         self.keras_model = keras_model
-        # seed, epochs, batch_size, verbose, cross_validation(boolean)
         self.keras_kwargs = keras_kwargs
         self.validation_matrix = validation_matrix
         self.tts_seed = tts_seed
