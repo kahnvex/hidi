@@ -284,7 +284,7 @@ class KerasKfoldTransform(Transform):
         n_fold = 1
         for train_index, test_index in kfold.split(x_train, y_train):
             self.keras_model.fit(
-                x_train[train_index], y_train[test_index],
+                x_train[train_index], y_train[train_index],
                 validation_data=[x_test, y_test],
                 **self.keras_kwargs)
 
