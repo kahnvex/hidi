@@ -226,7 +226,6 @@ class KerasEvaluationTransform(Transform):
 
         return self.keras_model, kwargs
 
-
 class KerasKfoldTransform(Transform):
     """
     Generalized transform for Keras algorithm with k fold cross validation
@@ -300,7 +299,7 @@ class KerasKfoldTransform(Transform):
 
             n_fold += 1
 
-        return None
+        return None, kwargs
 
 
 class KerasPredictionTransform(Transform):
