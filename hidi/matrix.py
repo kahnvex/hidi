@@ -224,13 +224,12 @@ class KerasEvaluationTransform(Transform):
 
         return self.keras_model, kwargs
 
+
 class KerasKfoldTransform(Transform):
     """
     Generalized transform for Keras algorithm with k fold cross validation
     evaluation
     """
-
-
     def __init__(self, keras_model, validation_matrix, tts_seed=42,
                  tt_split=0.25, kfold_n_splits=10, kfold_seed=42,
                  kfold_shuffle=True, log_dir='./logs/kfold/{0}_fold',
@@ -284,13 +283,14 @@ class KerasKfoldTransform(Transform):
                             histogram_freq=self.tensorboard_hist_freq)],
                             **self.keras_kwargs)
             n_fold+=1
+            n_fold += 1
 
         return None
 
 
 class KerasStratifiedKfoldTransform(Transform):
     """
-    Generalized transform for Keras algorithm with stratified k fold 
+    Generalized transform for Keras algorithm with stratified k fold
     cross validation evaluation for classification
 
     The model will be evaluated using tensorboard and returns None
@@ -305,7 +305,7 @@ class KerasStratifiedKfoldTransform(Transform):
         self.keras_model = keras_model
         self.keras_kwargs = keras_kwargs
         self.validation_matrix = validation_matrix
-        
+
         self.kfold_n_splits = kfold_n_splits
         self.kfold_seed = kfold_seed
         self.kfold_shuffle = kfold_shuffle
@@ -336,8 +336,8 @@ class KerasStratifiedKfoldTransform(Transform):
             embedding[:, :columns], embedding[:, columns:],
             random_state=self.tts_seed, test_size=self.tt_split)
 
-        kfold = StratifiedKFold(n_splits=self.kfold_n_splits, 
-                                random_state=self.kfold_seed, 
+        kfold = StratifiedKFold(n_splits=self.kfold_n_splits,
+                                random_state=self.kfold_seed,
                                 shuffle=self.kfold_shuffle)
 
         n_fold = 1
@@ -349,8 +349,10 @@ class KerasStratifiedKfoldTransform(Transform):
                             histogram_freq=self.tensorboard_hist_freq)],
                             **self.keras_kwargs)
             n_fold+=1
+            n_fold += 1
 
         return None
+
 
 class KerasPredictionTransform(Transform):
     """
