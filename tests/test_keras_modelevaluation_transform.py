@@ -31,3 +31,9 @@ class TestKeraModelEvaluation(unittest.TestCase):
         x_train, y_train = model.fit.call_args[0]
         self.assertEqual(x_train.shape, (7500, 6))
         self.assertEqual(y_train.shape, (7500, 2))
+
+    def test_keras_model_is_returned(self):
+        mock = Mock()
+        t = KerasEvaluationTransform(mock, self.validation)
+        model, _ = t.transform(self.M)
+        self.assertEqual(mock, model)
