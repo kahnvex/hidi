@@ -272,10 +272,12 @@ class KerasKfoldTransform(Transform):
                           shuffle=self.kfold_shuffle)
 
         n_fold = 1
-        for train_index, test_index in kfold.split(x_train, y_train):
+        X = embedding[:, :columns]
+        Y = embedding[:, columns:]
+        for train_index, test_index in kfold.split(X, Y):
             self.keras_model.fit(
-                x_train[train_index], y_train[train_index],
-                validation_data=[x_test, y_test],
+                X[train_index], Y[train_index],
+                validation_data=[X[test_index], Y[train_index]],
                 **self.keras_kwargs)
 
             files = os.listdir(self.log_dir)
