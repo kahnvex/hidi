@@ -26,8 +26,11 @@ class TestKerasKfoldTransform(unittest.TestCase):
         self.assertEqual(10, model.fit.call_count)
 
     def test_baselinemodel_fit_call_args_shape(self):
-        t = KerasKfoldTransform(Mock(), self.validation)
+        mock = Mock()
+        t = KerasKfoldTransform(mock, self.validation)
         model, _ = t.transform(self.M)
+        self.assertEqual(model, mock)
+
         x_train, y_train = model.fit.call_args[0]
         self.assertEqual(x_train.shape, (9000, 6))
         self.assertEqual(y_train.shape, (9000, 2))
