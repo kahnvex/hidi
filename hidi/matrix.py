@@ -9,8 +9,6 @@ from pyvalid import accepts
 from scipy.sparse import csr_matrix
 from sklearn.decomposition import TruncatedSVD
 from sklearn.model_selection import train_test_split, KFold, StratifiedKFold
-from shutil import move
-import os
 
 # Catch annoying warnings from nimfa
 with warnings.catch_warnings():
@@ -232,7 +230,7 @@ class KerasKfoldTransform(Transform):
     Generalized transform for Keras algorithm with k fold cross validation
     evaluation
     """
-    def __init__(self, keras_model, validation_matrix, tensorboard_log_dir,
+    def __init__(self, keras_model, validation_matrix,
                  kfold_n_splits=10, kfold_seed=42, kfold_shuffle=True,
                  classification=False, **keras_kwargs):
         self.keras_model = keras_model
@@ -242,8 +240,6 @@ class KerasKfoldTransform(Transform):
         self.kfold_n_splits = kfold_n_splits
         self.kfold_seed = kfold_seed
         self.kfold_shuffle = kfold_shuffle
-
-        self.log_dir = tensorboard_log_dir
 
         self.classification = classification
 
@@ -271,7 +267,6 @@ class KerasKfoldTransform(Transform):
                           random_state=self.kfold_seed,
                           shuffle=self.kfold_shuffle)
 
-        n_fold = 1
         X = embedding[:, :columns]
         Y = embedding[:, columns:]
         for train_index, test_index in kfold.split(X, Y):
@@ -279,18 +274,6 @@ class KerasKfoldTransform(Transform):
                 X[train_index], Y[train_index],
                 validation_data=[X[test_index], Y[train_index]],
                 **self.keras_kwargs)
-
-            files = os.listdir(self.log_dir)
-            newfile_path = os.path.join(self.log_dir,
-                                        '{0}_fold'.format(n_fold))
-            if not os.path.exists(newfile_path):
-                os.makedirs(newfile_path)
-            for file in files:
-                if file.startswith('event'):
-                    move(os.path.join(self.log_dir, file),
-                         newfile_path)
-
-            n_fold += 1
 
         return self.keras_model, kwargs
 
