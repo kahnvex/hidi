@@ -292,7 +292,7 @@ class KerasKfoldTransform(Transform):
 
             n_fold += 1
 
-        return None, kwargs
+        return self.keras_model, kwargs
 
 
 class KerasPredictionTransform(Transform):
