@@ -233,8 +233,7 @@ class KerasKfoldTransform(Transform):
     evaluation
     """
     def __init__(self, keras_model, validation_matrix, tensorboard_log_dir,
-                 tts_seed=42, tt_split=0.25, kfold_n_splits=10,
-                 kfold_seed=42, kfold_shuffle=True,
+                 kfold_n_splits=10, kfold_seed=42, kfold_shuffle=True,
                  classification=False, **keras_kwargs):
         self.keras_model = keras_model
         self.keras_kwargs = keras_kwargs
@@ -243,9 +242,6 @@ class KerasKfoldTransform(Transform):
         self.kfold_n_splits = kfold_n_splits
         self.kfold_seed = kfold_seed
         self.kfold_shuffle = kfold_shuffle
-
-        self.tts_seed = tts_seed
-        self.tt_split = tt_split
 
         self.log_dir = tensorboard_log_dir
 
@@ -260,17 +256,11 @@ class KerasKfoldTransform(Transform):
         'features' columns for prediction, and applies a Keras sequential
         model to it.
 
-        The model will be evaluated using tensorboard and returns None
-
         """
         rows, columns = M.shape
         embedding = M.merge(self.validation_matrix, left_index=True,
                             right_index=True)
         embedding = embedding.values
-
-        x_train, x_test, y_train, y_test = train_test_split(
-            embedding[:, :columns], embedding[:, columns:],
-            random_state=self.tts_seed, test_size=self.tt_split)
 
         if self.classification:
             kfold = StratifiedKFold(n_splits=self.kfold_n_splits,
