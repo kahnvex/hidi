@@ -322,6 +322,9 @@ class KerasPredictionTransform(Transform):
 
     This transform takes a trained Keras model. It applies the train model
     to the input when :code:`transform` is called.
+
+    :param: model: trained keras model
+    :type M: trained keras model
     """
     def __init__(self, model):
         self.model = model
@@ -332,8 +335,13 @@ class KerasPredictionTransform(Transform):
         to it.
 
         Returns the predictions from the trained Keras model
+
+        :param: M: a dataframe that has :code:`item_id` index, other
+            'features' columns
+        :param: M: pandas.DataFrame
+        :rtype: ndarray-like object with its kwargs
         """
-        predictions = self.model.predict(M)  # M is the ndarray-like object
+        predictions = self.model.predict(M)
         return predictions, kwargs
 
 
