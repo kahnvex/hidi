@@ -28,7 +28,7 @@ with open('README.rst', 'r', 'utf-8') as f:
 
 setup(
     name='HiDi',
-    version='0.0.2',
+    version='0.0.3',
     description='High-dimensional embedding generation library',
     long_description=readme,
     license='ALv2',
