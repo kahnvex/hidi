@@ -3,7 +3,7 @@ import unittest
 import numpy as np
 import pandas as pd
 
-from hidi.matrix import KerasEvaluationTransform
+from hidi.matrix import KerasKfoldTransform
 
 if sys.version_info < (3, 0):
     from mock import Mock
@@ -11,7 +11,7 @@ else:
     from unittest.mock import Mock
 
 
-class TestKeraModelEvaluation(unittest.TestCase):
+class TestKerasKfoldTransform(unittest.TestCase):
     def setUp(self):
         self.items = range(10000)
         self.M = pd.DataFrame(np.random.rand(10000, 6), index=self.items)
@@ -20,20 +20,20 @@ class TestKeraModelEvaluation(unittest.TestCase):
                                        index=self.items)
         self.validation.index.name = 'items'
 
-    def test_baselinemodel_fit_is_called_once(self):
-        t = KerasEvaluationTransform(Mock(), self.validation)
+    def test_baselinemodel_fit_is_called_ten_times(self):
+        t = KerasKfoldTransform(Mock(), self.validation)
         model, _ = t.transform(self.M)
-        self.assertEqual(1, model.fit.call_count)
+        self.assertEqual(10, model.fit.call_count)
 
-    def test_baselinemodel_fit_call_args_shape(self):
-        t = KerasEvaluationTransform(Mock(), self.validation)
+    def test_kfold_transform_calls_fit_with_shape_9000x6(self):
+        t = KerasKfoldTransform(Mock(), self.validation)
         model, _ = t.transform(self.M)
         x_train, y_train = model.fit.call_args[0]
-        self.assertEqual(x_train.shape, (7500, 6))
-        self.assertEqual(y_train.shape, (7500, 2))
+        self.assertEqual(x_train.shape, (9000, 6))
+        self.assertEqual(y_train.shape, (9000, 2))
 
     def test_keras_model_is_returned(self):
         mock = Mock()
-        t = KerasEvaluationTransform(mock, self.validation)
+        t = KerasKfoldTransform(mock, self.validation)
         model, _ = t.transform(self.M)
         self.assertEqual(mock, model)

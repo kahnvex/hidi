@@ -8,7 +8,7 @@ from hidi.linalg import dot
 from pyvalid import accepts
 from scipy.sparse import csr_matrix
 from sklearn.decomposition import TruncatedSVD
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, KFold, StratifiedKFold
 
 # Catch annoying warnings from nimfa
 with warnings.catch_warnings():
@@ -159,6 +159,12 @@ class DenseTransform(Transform):
     Transform a sparse matrix to its dense representation.
     """
     def transform(self, M, **kwargs):
+        """
+        Takes a sparse matrix and transform it into its dense representation
+
+        :param M: a sparse matrix
+        :type M: scipy.sparse classes
+        """
         return M.todense(), kwargs
 
 
@@ -181,18 +187,24 @@ class KerasEvaluationTransform(Transform):
     This transform takes a Keras sequential model, a validation matrix and
     its keyword arugments upon initialization.
 
-    The Keras squential model is documented here:
-    https://keras.io/getting-started/sequential-model-guide/
-
-    A validation matrix is a dataframe that has :code:`item_id` index, other
-    'label' columns. It will be inner joined with the M matrix and then fed
-    into the Keras sequential model.
+    :param keras_model: a Keras sequential model which is documented here:
+        https://keras.io/getting-started/sequential-model-guide/
+    :type keras_model: Keras Sequential model
+    :param validation_matrix: A validation matrix is a dataframe that has
+        :code:`item_id` index, other 'label' columns. It will be inner
+        joined with the M matrix and then fed into the Keras sequential
+        model.
+    :type validation_matrix: pandas.DataFrame
+    :param tts_seed: random state seed for :code:`train_test_split`
+    :type tts_seed: int
+    :param tt_split: the proportion of the dataset to include in the test
+        split for :code:`train_test_split`
+    :type tt_split: float
     """
 
     def __init__(self, keras_model, validation_matrix, tts_seed=42,
                  tt_split=0.25, **keras_kwargs):
         self.keras_model = keras_model
-        # seed, epochs, batch_size, verbose, cross_validation(boolean)
         self.keras_kwargs = keras_kwargs
         self.validation_matrix = validation_matrix
         self.tts_seed = tts_seed
@@ -207,7 +219,11 @@ class KerasEvaluationTransform(Transform):
         'features' columns for prediction, and applies a Keras sequential
         model to it.
 
-        Returns a trained Keras model and its keyword arguments
+        :param M: a dataframe that has :code:`item_id` index, other
+        'features' columns
+        :type M: pandas.DataFrame
+        :rtype: a tuple with trained Keras model and its keyword
+            arguments
 
         """
         rows, columns = M.shape
@@ -226,12 +242,89 @@ class KerasEvaluationTransform(Transform):
         return self.keras_model, kwargs
 
 
+class KerasKfoldTransform(Transform):
+    """
+    Generalized transform for Keras algorithm with k fold cross validation
+    evaluation
+
+    :param keras_model: a Keras sequential model which is documented here:
+        https://keras.io/getting-started/sequential-model-guide/
+    :type keras_model: Keras Sequential model
+    :param validation_matrix: A validation matrix is a dataframe that has
+        :code:`item_id` index, other 'label' columns. It will be inner
+        joined with the M matrix and then fed into the Keras sequential
+        model.
+    :type validation_matrix: pandas.DataFrame
+    :param kfold_n_splits: Number of folds for kfold. Must be at least 2.
+    :type kfold_n_splits: int
+    :param kfold_seed: random state seed for kfold
+    :type kfold_seed: None, int or RandomState
+    :param kfold_shuffle: Whether to shuffle the data before splitting
+        into batches for kfold
+    :type kfold_shuffle: boolean
+    """
+    def __init__(self, keras_model, validation_matrix,
+                 kfold_n_splits=10, kfold_seed=42, kfold_shuffle=True,
+                 classification=False, **keras_kwargs):
+        self.keras_model = keras_model
+        self.keras_kwargs = keras_kwargs
+        self.validation_matrix = validation_matrix
+
+        self.kfold_n_splits = kfold_n_splits
+        self.kfold_seed = kfold_seed
+        self.kfold_shuffle = kfold_shuffle
+
+        self.classification = classification
+
+        if 'item_id' in validation_matrix.columns:
+            self.validation_matrix.set_index('item_id', inplace=True)
+
+    def transform(self, M,  **kwargs):
+        """
+        Takes a Takes a dataframe that has :code:`item_id` index, other
+        'features' columns for prediction, and applies a Keras sequential
+        model to it.
+
+        :param M: a dataframe that has :code:`item_id` index, other
+            'features' columns
+        :type M: pandas.DataFrame
+        :rtype: a tuple with trained Keras model and its keyword
+            arguments
+        """
+        rows, columns = M.shape
+        embedding = M.merge(self.validation_matrix, left_index=True,
+                            right_index=True)
+        embedding = embedding.values
+
+        if self.classification:
+            kfold = StratifiedKFold(n_splits=self.kfold_n_splits,
+                                    random_state=self.kfold_seed,
+                                    shuffle=self.kfold_shuffle)
+        else:
+            kfold = KFold(n_splits=self.kfold_n_splits,
+                          random_state=self.kfold_seed,
+                          shuffle=self.kfold_shuffle)
+
+        X = embedding[:, :columns]
+        Y = embedding[:, columns:]
+        for train_index, test_index in kfold.split(X, Y):
+            self.keras_model.fit(
+                X[train_index], Y[train_index],
+                validation_data=[X[test_index], Y[train_index]],
+                **self.keras_kwargs)
+
+        return self.keras_model, kwargs
+
+
 class KerasPredictionTransform(Transform):
     """
     Generalized transform for Keras model prediction
 
     This transform takes a trained Keras model. It applies the train model
     to the input when :code:`transform` is called.
+
+    :param: model: trained keras model
+    :type M: trained keras model
     """
     def __init__(self, model):
         self.model = model
@@ -242,8 +335,13 @@ class KerasPredictionTransform(Transform):
         to it.
 
         Returns the predictions from the trained Keras model
+
+        :param: M: a dataframe that has :code:`item_id` index, other
+            'features' columns
+        :param: M: pandas.DataFrame
+        :rtype: ndarray-like object with its kwargs
         """
-        predictions = self.model.predict(M)  # M is the ndarray-like object
+        predictions = self.model.predict(M)
         return predictions, kwargs
 
 
