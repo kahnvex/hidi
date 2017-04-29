@@ -1,3 +1,44 @@
+import warnings
+import numpy as np
+from numpy.random import permutation
+from sklearn.decomposition import TruncatedSVD
+from hidi.transform import Transform
+
+# Catch annoying warnings from nimfa
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore")
+    import nimfa as nf
+
+
+class W2VStringTransform(Transform):
+    """
+    Takes a pandas Dataframe  and transforms it into a
+    string
+
+    Input data should be a pandas Dataframe formatted
+    with three columns: :code:`link_id`, :code:`item_id`,
+    and :code:`score`. If score is not provided, it we be
+    defaulted to one. :code:`link_id` represents to the
+    "user" and `item_id` represents the "item" in the context
+    of traditional collaborative filtering.
+    """
+    def __init__(self, n_shuffles=3, **w2v_kwargs):
+        self.w2v_kwargs = w2v_kwargs
+        self.n_shuffles = n_shuffles
+
+    def transform(self, df, **kwargs):
+        if 'item_id' not in df.index:
+            df.set_index('item_id', inplace=True)
+
+        final_b = ''
+        for index in df.index.unique():
+            a0 = df.loc[index].link_id
+            a = a0
+            for i in range(self.n_shuffles-1):
+                a = np.append(a, permutation(a0))
+            b = " ".join(str(x) for x in a)
+            final_b = " ".join([final_b, b]).strip()
+        return final_b, kwargs
 
 
 class SkLearnTransform(Transform):
