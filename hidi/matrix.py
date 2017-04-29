@@ -1,19 +1,12 @@
 import numpy as np
 import pandas as pd
 import types
-import warnings
 
 from hidi.transform import Transform
 from hidi.linalg import dot
 from pyvalid import accepts
 from scipy.sparse import csr_matrix
-from sklearn.decomposition import TruncatedSVD
 from sklearn.model_selection import train_test_split, KFold, StratifiedKFold
-
-# Catch annoying warnings from nimfa
-with warnings.catch_warnings():
-    warnings.simplefilter("ignore")
-    import nimfa as nf
 
 
 class ApplyTransform(Transform):
