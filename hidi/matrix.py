@@ -26,7 +26,7 @@ class ApplyTransform(Transform):
     :param fn: The function to be applied to transform input.
     :type fn: function
     """
-    def __init__(self, fn)::
+    def __init__(self, fn):
         self.fn = fn
 
     def transform(self, x, **kwargs):
