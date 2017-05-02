@@ -15,18 +15,21 @@ class W2VStringTransform(Transform):
     Takes a pandas Dataframe  and transforms it into a
     string
 
-    Input data should be a pandas Dataframe formatted
-    with three columns: :code:`link_id`, :code:`item_id`,
-    and :code:`score`. If score is not provided, it we be
-    defaulted to one. :code:`link_id` represents to the
-    "user" and `item_id` represents the "item" in the context
-    of traditional collaborative filtering.
+    :param n_shuffles: The number of suffles for the 
+    `item_id`.
+    :type n_shuffles: int
     """
     def __init__(self, n_shuffles=3, **w2v_kwargs):
         self.w2v_kwargs = w2v_kwargs
         self.n_shuffles = n_shuffles
 
     def transform(self, df, **kwargs):
+        """
+        :param df: a pandas Dataframe with two columns:
+        :code:`link_id`, :code:`item_id`
+        :type df: pandas.Dataframe
+        :rtype: str
+        """
         if 'item_id' not in df.index:
             df.set_index('item_id', inplace=True)
 
