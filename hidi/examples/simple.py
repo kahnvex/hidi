@@ -5,7 +5,7 @@ from hidi import inout, clean, matrix, pipeline
 in_files = ['hidi/examples/data/user-item.csv']
 
 # File to write output data to
-outfile = 'embeddings.csv'
+outfile = 'latent-factors.csv'
 
 transforms = [
     inout.ReadTransform(in_files),      # Read data from disk

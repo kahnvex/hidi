@@ -20,5 +20,5 @@ class TestDataLoader(unittest.TestCase):
         self.out = self.svd.transform(np_data, items=items)
 
     def test_returns_item_by_item_shape(self):
-        embeddings_matrix, _ = self.out
-        self.assertEqual(embeddings_matrix.shape, (6, 3))
+        factors_matrix, _ = self.out
+        self.assertEqual(factors_matrix.shape, (6, 3))

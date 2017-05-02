@@ -80,7 +80,7 @@ class WriteTransform(Transform):
                 for row in df.iterrows():
                     f.write(json.dumps({
                         self.link_key: row[0],
-                        'embedding': row[1].tolist()
+                        'factors': row[1].tolist()
                     }))
                     f.write('\n')
 

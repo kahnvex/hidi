@@ -227,12 +227,12 @@ class KerasEvaluationTransform(Transform):
 
         """
         rows, columns = M.shape
-        embedding = M.merge(self.validation_matrix, left_index=True,
-                            right_index=True)
-        embedding = embedding.values
+        factors = M.merge(self.validation_matrix, left_index=True,
+                          right_index=True)
+        factors = factors.values
 
         x_train, x_test, y_train, y_test = train_test_split(
-            embedding[:, :columns], embedding[:, columns:],
+            factors[:, :columns], factors[:, columns:],
             random_state=self.tts_seed, test_size=self.tt_split)
 
         self.keras_model.fit(
@@ -292,9 +292,9 @@ class KerasKfoldTransform(Transform):
             arguments
         """
         rows, columns = M.shape
-        embedding = M.merge(self.validation_matrix, left_index=True,
+        factors = M.merge(self.validation_matrix, left_index=True,
                             right_index=True)
-        embedding = embedding.values
+        factors = factors.values
 
         if self.classification:
             kfold = StratifiedKFold(n_splits=self.kfold_n_splits,
@@ -305,8 +305,8 @@ class KerasKfoldTransform(Transform):
                           random_state=self.kfold_seed,
                           shuffle=self.kfold_shuffle)
 
-        X = embedding[:, :columns]
-        Y = embedding[:, columns:]
+        X = factors[:, :columns]
+        Y = factors[:, columns:]
         for train_index, test_index in kfold.split(X, Y):
             self.keras_model.fit(
                 X[train_index], Y[train_index],

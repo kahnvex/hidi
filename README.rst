@@ -1,11 +1,11 @@
-HiDi: Pipelines for Embeddings
-==============================
+HiDi: Pipelines for Latent Factor Modeling
+==========================================
 
 .. image:: https://circleci.com/gh/VEVO/hidi/tree/master.svg?style=svg
    :target: https://circleci.com/gh/VEVO/hidi/tree/master
 
-HiDi is a library for high-dimensional embedding generation for collaborative
-filtering applications.
+HiDi is a library for high-dimensional latent factor modeling for
+collaborative filtering applications.
 
 Read the `full documentation <http://hidi.rtfd.io/>`_.
 
@@ -23,7 +23,7 @@ This will get you started.
    in_files = ['hidi/examples/data/user-item.csv']
 
    # File to write output data to
-   outfile = 'embeddings.csv'
+   outfile = 'latent-factors.csv'
 
    transforms = [
        inout.ReadTransform(in_files),      # Read data from disk
