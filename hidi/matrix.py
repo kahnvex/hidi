@@ -350,8 +350,7 @@ class KerasPredictionTransform(Transform):
         :param M:
             a dataframe that has an :code:`item_id` index,
             and a "features" columns
-
-        :param M: pandas.DataFrame
+        :type M: pandas.DataFrame
         :rtype: ndarray-like object with its kwargs
         """
         predictions = self.model.predict(M)
