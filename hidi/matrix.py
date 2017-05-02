@@ -26,7 +26,7 @@ class ApplyTransform(Transform):
     :param fn: The function to be applied to transform input.
     :type fn: function
     """
-    def __init__(self, fn):
+    def __init__(self, fn)::
         self.fn = fn
 
     def transform(self, x, **kwargs):
@@ -377,7 +377,7 @@ class SkLearnTransform(Transform):
         Takes a numpy ndarray-like object and applies a SkLearn
         algorithm to it.
 
-        :type: numpy.ndarray
+        :rtype: numpy.ndarray
         """
         sklearn_alg = self.SkLearnAlg(**self.sklearn_args)
         transformed = sklearn_alg.fit_transform(M)
