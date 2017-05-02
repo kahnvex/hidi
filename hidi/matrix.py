@@ -118,7 +118,7 @@ class ScalarTransform(Transform):
         """
         Takes a :code:`matrix_to_scale` as a numpy ndarray-like object
         and performs scaling on it, then returns the result.
-        
+
         :rtype: Any
         """
         out = self.scale(matrix_to_scale)
@@ -183,7 +183,7 @@ class ItemsMatrixToDFTransform(Transform):
         """
         Takes a numpy ndarray-like object and a list of item identifiers
         to be used as the index for the DataFrame.
-        
+
         :rtype: pandas.DataFrame
         """
         return pd.DataFrame(M, index=items), kwargs
