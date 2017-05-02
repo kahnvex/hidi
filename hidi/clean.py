@@ -13,6 +13,11 @@ class DedupeTransform(Transform):
         Takes a :code:`df` that has :code:`link_id` and :code:`item_id`
         columns, and deduplicates them so that each pair is represented
         at most once.
+
+        :param df: The dataframe to dedupe
+        :type df: pandas.DataFrame
+
+        :rtype: pandas.DataFrame
         """
         if self.skip_dedupe:
             return df, kwargs

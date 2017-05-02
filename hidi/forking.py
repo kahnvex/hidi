@@ -37,6 +37,8 @@ class ThreadForkTransform(ExecutorFork):
     :param progress: When True, progress of the forked pipelines
         will be logged.
     :type progress: bool
+
+    :rtype list[Any]
     """
     def transform(self, io, **kwargs):
         return self.executor_fork(ThreadPoolExecutor, io, **kwargs)
@@ -62,6 +64,8 @@ class ProcessForkTransform(ExecutorFork):
     :param progress: When True, progress of the forked pipelines
         will be logged.
     :type progress: bool
+
+    :rtype list[Any]
     """
     def transform(self, io, **kwargs):
         return self.executor_fork(ProcessPoolExecutor, io, **kwargs)
@@ -77,6 +81,8 @@ class TrivialForkTransform(Transform):
     :param progress: When True, progress of the forked pipelines
         will be logged.
     :type progress: bool
+
+    :rtype list[Any]
     """
     def __init__(self, pipelines, progress=False):
         self.pipelines = pipelines
