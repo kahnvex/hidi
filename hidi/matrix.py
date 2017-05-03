@@ -32,6 +32,7 @@ class ApplyTransform(Transform):
     def transform(self, x, **kwargs):
         """
         :param x: The input to the function :code:`fn`.
+        :rtype: Any
         """
         return self.fn(x, **kwargs), kwargs
 
@@ -68,6 +69,8 @@ class SimilarityTransform(Transform):
         :param links: Array of :code:`link_ids` in the same order
             that they appear in :code:`M`.
         :type links: array
+
+        :rtype: numpy.ndarray-like
         """
         M_T = M.transpose()
 
@@ -115,6 +118,8 @@ class ScalarTransform(Transform):
         """
         Takes a :code:`matrix_to_scale` as a numpy ndarray-like object
         and performs scaling on it, then returns the result.
+
+        :rtype: Any
         """
         out = self.scale(matrix_to_scale)
 
@@ -164,6 +169,8 @@ class DenseTransform(Transform):
 
         :param M: a sparse matrix
         :type M: scipy.sparse classes
+
+        :rtype: numpy.ndarray
         """
         return M.todense(), kwargs
 
@@ -176,6 +183,8 @@ class ItemsMatrixToDFTransform(Transform):
         """
         Takes a numpy ndarray-like object and a list of item identifiers
         to be used as the index for the DataFrame.
+
+        :rtype: pandas.DataFrame
         """
         return pd.DataFrame(M, index=items), kwargs
 
@@ -219,8 +228,8 @@ class KerasEvaluationTransform(Transform):
         'features' columns for prediction, and applies a Keras sequential
         model to it.
 
-        :param M: a dataframe that has :code:`item_id` index, other
-        'features' columns
+        :param M: a dataframe that has an :code:`item_id` index, and
+            "features" columns
         :type M: pandas.DataFrame
         :rtype: a tuple with trained Keras model and its keyword
             arguments
@@ -285,8 +294,10 @@ class KerasKfoldTransform(Transform):
         'features' columns for prediction, and applies a Keras sequential
         model to it.
 
-        :param M: a dataframe that has :code:`item_id` index, other
-            'features' columns
+        :param M:
+            a dataframe that has an :code:`item_id` index, and
+            "features" columns.
+
         :type M: pandas.DataFrame
         :rtype: a tuple with trained Keras model and its keyword
             arguments
@@ -336,9 +347,10 @@ class KerasPredictionTransform(Transform):
 
         Returns the predictions from the trained Keras model
 
-        :param: M: a dataframe that has :code:`item_id` index, other
-            'features' columns
-        :param: M: pandas.DataFrame
+        :param M:
+            a dataframe that has an :code:`item_id` index,
+            and a "features" columns
+        :type M: pandas.DataFrame
         :rtype: ndarray-like object with its kwargs
         """
         predictions = self.model.predict(M)
@@ -364,6 +376,8 @@ class SkLearnTransform(Transform):
         """
         Takes a numpy ndarray-like object and applies a SkLearn
         algorithm to it.
+
+        :rtype: numpy.ndarray
         """
         sklearn_alg = self.SkLearnAlg(**self.sklearn_args)
         transformed = sklearn_alg.fit_transform(M)
@@ -404,6 +418,9 @@ class NimfaTransform(Transform):
         self.nimfa_kwargs = nimfa_kwargs
 
     def transform(self, M, **kwargs):
+        """
+        :rtype: numpy.ndarray
+        """
         nimfa_alg = self.NimfaAlg(M, **self.nimfa_kwargs)
         nimfa_fit = nimfa_alg()
         kwargs['nimfa_fit'] = nimfa_fit
