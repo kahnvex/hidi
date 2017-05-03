@@ -20,13 +20,13 @@ def create_pipeline(infiles):
         matrix.SNMFTransform(rank=32, max_iter=2),
         matrix.DenseTransform(),
         matrix.ItemsMatrixToDFTransform(),
-        inout.WriteTransform('snmf-embeddings.csv')
+        inout.WriteTransform('snmf-latent-factors.csv')
     ])
 
     right = pipeline.Pipeline([
         matrix.SVDTransform(n_components=32, n_iter=2),
         matrix.ItemsMatrixToDFTransform(),
-        inout.WriteTransform('svd-embeddings.csv')
+        inout.WriteTransform('svd-latent-factors.csv')
     ])
 
     pl.add(forking.ProcessForkTransform([left, right], progress=False))
