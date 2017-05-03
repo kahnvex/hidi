@@ -419,13 +419,11 @@ class NimfaTransform(Transform):
 
     def transform(self, M, **kwargs):
         """
-        :rtype: numpy.ndarray
+        :rtype: nimfa.fit_model
         """
         nimfa_alg = self.NimfaAlg(M, **self.nimfa_kwargs)
-        nimfa_fit = nimfa_alg()
-        kwargs['nimfa_fit'] = nimfa_fit
 
-        return nimfa_fit.basis(), kwargs
+        return nimfa_alg(), kwargs
 
 
 class SNMFTransform(NimfaTransform):
