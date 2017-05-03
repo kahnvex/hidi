@@ -293,7 +293,7 @@ class KerasKfoldTransform(Transform):
         """
         rows, columns = M.shape
         factors = M.merge(self.validation_matrix, left_index=True,
-                            right_index=True)
+                          right_index=True)
         factors = factors.values
 
         if self.classification:
