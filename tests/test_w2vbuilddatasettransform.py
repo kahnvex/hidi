@@ -7,7 +7,6 @@ class TestW2VBuildDatasetTransform(unittest.TestCase):
         self.words = """Vevo is a awesome!
                         Vevo Vevo
                      """
-        self.words = self.words.split()
         self.test_transform = W2VBuildDatasetTransform()
 
     def test_builddatasettransform_returns_right_type(self):
