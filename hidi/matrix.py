@@ -25,6 +25,7 @@ class ApplyTransform(Transform):
     def transform(self, x, **kwargs):
         """
         :param x: The input to the function :code:`fn`.
+        :rtype: Any
         """
         return self.fn(x, **kwargs), kwargs
 
@@ -61,6 +62,8 @@ class SimilarityTransform(Transform):
         :param links: Array of :code:`link_ids` in the same order
             that they appear in :code:`M`.
         :type links: array
+
+        :rtype: numpy.ndarray-like
         """
         M_T = M.transpose()
 
@@ -108,6 +111,8 @@ class ScalarTransform(Transform):
         """
         Takes a :code:`matrix_to_scale` as a numpy ndarray-like object
         and performs scaling on it, then returns the result.
+
+        :rtype: Any
         """
         out = self.scale(matrix_to_scale)
 
@@ -157,6 +162,8 @@ class DenseTransform(Transform):
 
         :param M: a sparse matrix
         :type M: scipy.sparse classes
+
+        :rtype: numpy.ndarray
         """
         return M.todense(), kwargs
 
@@ -169,6 +176,8 @@ class ItemsMatrixToDFTransform(Transform):
         """
         Takes a numpy ndarray-like object and a list of item identifiers
         to be used as the index for the DataFrame.
+
+        :rtype: pandas.DataFrame
         """
         return pd.DataFrame(M, index=items), kwargs
 
@@ -212,20 +221,20 @@ class KerasEvaluationTransform(Transform):
         'features' columns for prediction, and applies a Keras sequential
         model to it.
 
-        :param M: a dataframe that has :code:`item_id` index, other
-        'features' columns
+        :param M: a dataframe that has an :code:`item_id` index, and
+            "features" columns
         :type M: pandas.DataFrame
         :rtype: a tuple with trained Keras model and its keyword
             arguments
 
         """
         rows, columns = M.shape
-        embedding = M.merge(self.validation_matrix, left_index=True,
-                            right_index=True)
-        embedding = embedding.values
+        factors = M.merge(self.validation_matrix, left_index=True,
+                          right_index=True)
+        factors = factors.values
 
         x_train, x_test, y_train, y_test = train_test_split(
-            embedding[:, :columns], embedding[:, columns:],
+            factors[:, :columns], factors[:, columns:],
             random_state=self.tts_seed, test_size=self.tt_split)
 
         self.keras_model.fit(
@@ -278,16 +287,18 @@ class KerasKfoldTransform(Transform):
         'features' columns for prediction, and applies a Keras sequential
         model to it.
 
-        :param M: a dataframe that has :code:`item_id` index, other
-            'features' columns
+        :param M:
+            a dataframe that has an :code:`item_id` index, and
+            "features" columns.
+
         :type M: pandas.DataFrame
         :rtype: a tuple with trained Keras model and its keyword
             arguments
         """
         rows, columns = M.shape
-        embedding = M.merge(self.validation_matrix, left_index=True,
-                            right_index=True)
-        embedding = embedding.values
+        factors = M.merge(self.validation_matrix, left_index=True,
+                          right_index=True)
+        factors = factors.values
 
         if self.classification:
             kfold = StratifiedKFold(n_splits=self.kfold_n_splits,
@@ -298,8 +309,8 @@ class KerasKfoldTransform(Transform):
                           random_state=self.kfold_seed,
                           shuffle=self.kfold_shuffle)
 
-        X = embedding[:, :columns]
-        Y = embedding[:, columns:]
+        X = factors[:, :columns]
+        Y = factors[:, columns:]
         for train_index, test_index in kfold.split(X, Y):
             self.keras_model.fit(
                 X[train_index], Y[train_index],
@@ -329,9 +340,10 @@ class KerasPredictionTransform(Transform):
 
         Returns the predictions from the trained Keras model
 
-        :param: M: a dataframe that has :code:`item_id` index, other
-            'features' columns
-        :param: M: pandas.DataFrame
+        :param M:
+            a dataframe that has an :code:`item_id` index,
+            and a "features" columns
+        :type M: pandas.DataFrame
         :rtype: ndarray-like object with its kwargs
         """
         predictions = self.model.predict(M)

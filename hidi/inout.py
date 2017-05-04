@@ -37,6 +37,8 @@ class ReadTransform(Transform):
         """
         Read in files from the :code:`infiles` array given
         upon instantiation.
+
+        :rtype: pandas.DataFrame
         """
         dfs = [pd.read_csv(inp) for inp in self._inputs]
         dfs = [self._normalize(df) for df in dfs]
@@ -71,6 +73,7 @@ class WriteTransform(Transform):
         :param df: The Pandas DataFrame to be written to a
             file
         :type df: pandas.DataFrame
+        :rtype: pandas.DataFrame
         """
         if self.file_format == 'csv':
             df.to_csv(self.outfile, encoding=self.encoding)
@@ -80,7 +83,7 @@ class WriteTransform(Transform):
                 for row in df.iterrows():
                     f.write(json.dumps({
                         self.link_key: row[0],
-                        'embedding': row[1].tolist()
+                        'factors': row[1].tolist()
                     }))
                     f.write('\n')
 

@@ -1,13 +1,13 @@
-HiDi: Pipelines for Embeddings
-==============================
+HiDi: Pipelines for Latent Factor Modeling
+==========================================
 
-HiDi is a library for high-dimensional embedding generation for collaborative
+HiDi is a library for high-dimensional latent factor modeling for collaborative
 filtering applications.
 
 Why HiDi?
 ---------
 
-We created HiDi because generating embeddings for collaborative filtering
+We created HiDi because modeling latent factors for collaborative filtering
 applications is a work intensive process that involves many data
 transformations, each of which requires special consideration to get a
 good result. HiDi makes the process more simple by breaking work into small
@@ -38,7 +38,7 @@ Installation
 To install HiDi, simply run
 
 .. code-block:: sh
-   
+
    $ pip install hidi
 
 API Documentation
