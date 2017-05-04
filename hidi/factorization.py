@@ -71,6 +71,7 @@ class W2VBuildDatasetTransform(Transform):
         count[0][1] = unk_count
         reverse_dictionary = dict(zip(dictionary.values(), dictionary.keys()))
         return data, count, dictionary, reverse_dictionary
+        return (data, count, dictionary, reverse_dictionary), kwargs
 
 
 class SkLearnTransform(Transform):
