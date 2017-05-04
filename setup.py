@@ -29,7 +29,7 @@ with open('README.rst', 'r', 'utf-8') as f:
 setup(
     name='HiDi',
     version='0.0.3',
-    description='High-dimensional embedding generation library',
+    description='High-dimensional latent factor modeling library',
     long_description=readme,
     license='ALv2',
     author='Vevo Engineering',
