@@ -1,5 +1,6 @@
 import warnings
 import numpy as np
+import collections
 from numpy.random import permutation
 from sklearn.decomposition import TruncatedSVD
 from hidi.transform import Transform
@@ -15,7 +16,7 @@ class W2VStringTransform(Transform):
     Takes a pandas Dataframe  and transforms it into a
     string
 
-    :param n_shuffles: The number of suffles for the 
+    :param n_shuffles: The number of suffles for the
     `item_id`.
     :type n_shuffles: int
     """
@@ -33,15 +34,43 @@ class W2VStringTransform(Transform):
         if 'item_id' not in df.index:
             df.set_index('item_id', inplace=True)
 
-        final_b = ''
+        words = ''
         for index in df.index.unique():
             a0 = df.loc[index].link_id
             a = a0
             for i in range(self.n_shuffles-1):
                 a = np.append(a, permutation(a0))
             b = " ".join(str(x) for x in a)
-            final_b = " ".join([final_b, b]).strip()
-        return final_b, kwargs
+            words = " ".join([words, b]).strip()
+        return words, kwargs
+
+
+class W2VBuildDatasetTransform(Transform):
+    def __init__(self, vocabulary_size=5000, **w2v_kwargs):
+        self.vocabulary_size = vocabulary_size
+        self.w2v_kwargs = w2v_kwargs
+
+    def transform(self, words, **kwargs):
+        if isinstance(words, str):
+            words = words.split()
+        count = [['UNK', -1]]
+        count_words = collections.Counter(words)
+        count.extend(count_words.most_common((self.vocabulary_size-1)))
+        dictionary = dict()
+        for word, _ in count:
+            dictionary[word] = len(dictionary)
+        data = list()
+        unk_count = 0
+        for word in words:
+            if word in dictionary:
+                index = dictionary[word]
+            else:
+                index = 0  # dictionary['UNK']
+                unk_count += 1
+            data.append(index)
+        count[0][1] = unk_count
+        reverse_dictionary = dict(zip(dictionary.values(), dictionary.keys()))
+        return data, count, dictionary, reverse_dictionary
 
 
 class SkLearnTransform(Transform):
