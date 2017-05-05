@@ -10,7 +10,7 @@ class TestW2VStringTransform(unittest.TestCase):
         self.df = pd.DataFrame(np.random.randint(
             0, 50, size=(1000, 2)),
             columns=['item_id', 'link_id'])
-        self.w2vstring = W2VStringTransform()
+        self.w2vstring = W2VStringTransform(get_item_embeddings=False)
         self.string, _ = self.w2vstring.transform(self.df)
 
     def test_w2vstring_returns_string(self):
@@ -21,5 +21,5 @@ class TestW2VStringTransform(unittest.TestCase):
         word_list = self.string.split()
         total_item = 0
         for index in df.index.unique():
-            total_item = len(df.loc[index].link_id)*3 + total_item
+            total_item = len(df.loc[index].item_id)*3 + total_item
         self.assertEqual(total_item, len(word_list))

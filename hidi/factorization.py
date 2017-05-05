@@ -24,24 +24,27 @@ class W2VStringTransform(Transform):
         self.w2v_kwargs = w2v_kwargs
         self.n_shuffles = n_shuffles
 
-    def transform(self, df, **kwargs):
+    def transform(self, df_temp, **kwargs):
         """
         :param df: a pandas Dataframe with two columns:
         :code:`link_id`, :code:`item_id`
         :type df: pandas.Dataframe
-        :rtype: str
+        :rtype: a string of shuffled item_id
         """
-        if 'item_id' not in df.index:
-            df.set_index('item_id', inplace=True)
+        df = df_temp
+        if ('link_id' in df.index) | ('item_id' in df.index):
+            df.reset_index(inplace=True)
 
+        df.set_index('link_id', inplace=True)
         words = ''
         for index in df.index.unique():
-            a0 = df.loc[index].link_id
-            a = a0
+            temp_item_id_list = df.loc[index].item_id
+            item_id_list = temp_item_id_list
             for i in range(self.n_shuffles - 1):
-                a = np.append(a, permutation(a0))
-            b = ' '.join(str(x) for x in a)
-            words = ' '.join([words, b]).strip()
+                item_id_list = np.append(item_id_list,
+                                         permutation(temp_item_id_list))
+            joined_shuffled_list = ' '.join(str(x) for x in item_id_list)
+            words = ' '.join([words, joined_shuffled_list]).strip()
         return words, kwargs
 
 
