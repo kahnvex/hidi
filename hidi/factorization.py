@@ -13,7 +13,7 @@ with warnings.catch_warnings():
 
 class W2VStringTransform(Transform):
     """
-    Takes a pandas Dataframe  and transforms it into a
+    Takes a pandas Dataframe and transforms it into a
     string
 
     :param n_shuffles: The number of suffles for the
