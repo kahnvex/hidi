@@ -73,11 +73,25 @@ class W2VGenismTransform(Transform):
 
 
 class W2VBuildDatasetTransform(Transform):
+    """
+    Takes a string of list of items(words) and tokenize it.
+    :param vocabulary_size: top n most frequent items(words)
+    :type vocabulary_size: int
+    """
     def __init__(self, vocabulary_size=5000, **w2v_kwargs):
         self.vocabulary_size = vocabulary_size
         self.w2v_kwargs = w2v_kwargs
 
     def transform(self, words, **kwargs):
+    """
+    :param words: a list or a string of items
+    :type words: list or str
+    :rtype: a tuple of `data`, `count`, `dictionary` and `reverse_dictionary`
+        `data` is the tokenized words, `count` is a list of tuple which
+        consists of `(item, count)`, `dictionary` stores tokens of each items
+        as its keys and items as its values and `reverse_dictionary` is the
+        reversed of `dictionary`
+    """
         if isinstance(words, str):
             words = words.split()
         count = [['UNK', -1]]
