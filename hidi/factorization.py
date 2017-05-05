@@ -38,10 +38,10 @@ class W2VStringTransform(Transform):
         for index in df.index.unique():
             a0 = df.loc[index].link_id
             a = a0
-            for i in range(self.n_shuffles-1):
+            for i in range(self.n_shuffles - 1):
                 a = np.append(a, permutation(a0))
-            b = " ".join(str(x) for x in a)
-            words = " ".join([words, b]).strip()
+            b = ' '.join(str(x) for x in a)
+            words = ' '.join([words, b]).strip()
         return words, kwargs
 
 
@@ -51,8 +51,8 @@ class W2VGenismTransform(Transform):
     Takes an uninitialized gensim.models.Word2Vec and here is more details
     about it:
     https://radimrehurek.com/gensim/models/word2vec.html
-    Note that the uninitialized gensim.model.Word2Vec model can be created without
-    sentences.
+    Note that the uninitialized gensim.model.Word2Vec model can be created
+    without sentences.
 
     :param gensim_w2v_model: an uninitialized gensim.model.Word2Vec model
     :type gensim_w2v_model: gensim.model.Word2Vec model
@@ -62,14 +62,14 @@ class W2VGenismTransform(Transform):
         self.gensim_w2v_model = gensim_w2v_model
 
     def transform(self, words, **kwargs):
-    """
-    Takes a string of items
+        """
+        Takes a string of items
 
-    :param words: a list of items
-    :type words: str
-    """
+        :param words: a list of items
+        :type words: str
+        """
         self.gensim_w2v_model.build_vocab(words, **self.gensim_w2v_kwargs)
-        return self.gensim_w2v_model, **kwargs
+        return self.gensim_w2v_model, kwargs
 
 
 class W2VBuildDatasetTransform(Transform):
@@ -83,15 +83,15 @@ class W2VBuildDatasetTransform(Transform):
         self.w2v_kwargs = w2v_kwargs
 
     def transform(self, words, **kwargs):
-    """
-    :param words: a list or a string of items
-    :type words: list or str
-    :rtype: a tuple of `data`, `count`, `dictionary` and `reverse_dictionary`
-        `data` is the tokenized words, `count` is a list of tuple which
-        consists of `(item, count)`, `dictionary` stores tokens of each items
-        as its keys and items as its values and `reverse_dictionary` is the
-        reversed of `dictionary`
-    """
+        """
+        :param words: a list or a string of items
+        :type words: list or str
+        :rtype: a tuple of `data`, `count`, `dictionary` and
+            `reverse_dictionary` `data` is the tokenized words, `count` is a
+            list of tuple which consists of `(item, count)`, `dictionary`
+            stores tokens of each items as its keys and items as its values
+            and `reverse_dictionary` is the reversed of `dictionary`
+        """
         if isinstance(words, str):
             words = words.split()
         count = [['UNK', -1]]
