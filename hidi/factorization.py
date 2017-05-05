@@ -111,7 +111,6 @@ class W2VBuildDatasetTransform(Transform):
             data.append(index)
         count[0][1] = unk_count
         reverse_dictionary = dict(zip(dictionary.values(), dictionary.keys()))
-        return data, count, dictionary, reverse_dictionary
         return (data, count, dictionary, reverse_dictionary), kwargs
 
 
