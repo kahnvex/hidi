@@ -1,5 +1,6 @@
 import warnings
 import numpy as np
+import pandas as pd
 import collections
 from numpy.random import permutation
 from sklearn.decomposition import TruncatedSVD
@@ -14,7 +15,9 @@ with warnings.catch_warnings():
 class W2VStringTransform(Transform):
     """
     Takes a pandas Dataframe and transforms it into a
-    string
+     list of sentences. Each sentence is a list
+     of words/items (unicode strings) that will be used for
+     training.
 
     :param n_shuffles: The number of suffles for the
     `item_id`.
@@ -108,7 +111,7 @@ class W2VGensimToDFTransform(Transform):
 
 class W2VBuildDatasetTransform(Transform):
     """
-    Takes a string of list of items(words) and tokenize it.
+    Takes a string of list of items(words) and tokenizes it.
     :param vocabulary_size: top n most frequent items(words)
     :type vocabulary_size: int
     """
@@ -130,7 +133,7 @@ class W2VBuildDatasetTransform(Transform):
             words = words.split()
         count = [['UNK', -1]]
         count_words = collections.Counter(words)
-        count.extend(count_words.most_common((self.vocabulary_size-1)))
+        count.extend(count_words.most_common((self.vocabulary_size - 1)))
         dictionary = dict()
         for word, _ in count:
             dictionary[word] = len(dictionary)
