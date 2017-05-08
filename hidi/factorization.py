@@ -29,23 +29,29 @@ class W2VStringTransform(Transform):
         :param df: a pandas Dataframe with two columns:
         :code:`link_id`, :code:`item_id`
         :type df: pandas.Dataframe
-        :rtype: a string of shuffled item_id
+        :rtype: a list sentences and each sentence is a list
+            of shuffled item_id
         """
         df = df_temp
         if ('link_id' in df.index) | ('item_id' in df.index):
             df.reset_index(inplace=True)
 
         df.set_index('link_id', inplace=True)
-        words = ''
+        sentences = []
         for index in df.index.unique():
+            joined_shuffled_list = []
             temp_item_id_list = df.loc[index].item_id
             item_id_list = temp_item_id_list
             for i in range(self.n_shuffles - 1):
-                item_id_list = np.append(item_id_list,
-                                         permutation(temp_item_id_list))
-            joined_shuffled_list = ' '.join(str(x) for x in item_id_list)
-            words = ' '.join([words, joined_shuffled_list]).strip()
-        return words, kwargs
+                try:
+                    item_id_list = np.append(item_id_list,
+                                             permutation(temp_item_id_list))
+                except:
+                    item_id_list = np.append(item_id_list, temp_item_id_list)
+            joined_shuffled_list = list(np.append(joined_shuffled_list,
+                                                  item_id_list))
+            sentences.append(joined_shuffled_list)
+        return sentences, kwargs
 
 
 class W2VGenismTransform(Transform):
