@@ -78,6 +78,28 @@ class W2VGenismTransform(Transform):
         return self.gensim_w2v_model, kwargs
 
 
+class W2VGensimToDFTransform(Transform):
+    """
+    Takes a trained gensim.model.Word2Vec model and save the item embeddings to
+    pandas.Dataframe
+
+    :param trained_gensim_w2v_model: a trained :code:`gensim.model.Word2Vec`
+    :type trained_gensim_w2v_model: gensim.model.Word2Vec
+    """
+    def __init__(self, trained_gensim_w2v_model, **gensim_w2v_kwargs):
+        self.gensim_w2v_kwargs = gensim_w2v_kwargs
+        self.model = trained_gensim_w2v_model
+
+    def transform(self, **kwargs):
+        index = []
+        embeddings = []
+        for key in self.model.wv.vocab.keys():
+            index.append(key)
+            embeddings.append(self.model[key])
+        embeddings = pd.Dataframe(embeddings, index=index)
+        return embeddings, kwargs
+
+
 class W2VBuildDatasetTransform(Transform):
     """
     Takes a string of list of items(words) and tokenize it.
