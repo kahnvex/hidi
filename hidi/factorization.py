@@ -51,27 +51,30 @@ class W2VStringTransform(Transform):
 class W2VGenismTransform(Transform):
     """
     Generalized transform for gensim.models.Word2Vec
-    Takes an uninitialized gensim.models.Word2Vec and here is more details
-    about it:
+    Takes an uninitialized :code:`gensim.models.Word2Vec`.
+    Read more about this model:
     https://radimrehurek.com/gensim/models/word2vec.html
     Note that the uninitialized gensim.model.Word2Vec model can be created
     without sentences.
 
     :param gensim_w2v_model: an uninitialized gensim.model.Word2Vec model
-    :type gensim_w2v_model: gensim.model.Word2Vec model
+    :type gensim_w2v_model: gensim.model.Word2Vec
     """
     def __init__(self, gensim_w2v_model, **gensim_w2v_kwargs):
         self.gensim_w2v_kwargs = gensim_w2v_kwargs
         self.gensim_w2v_model = gensim_w2v_model
 
-    def transform(self, words, **kwargs):
+    def transform(self, sentences, **kwargs):
         """
         Takes a string of items
 
-        :param words: a list of items
-        :type words: str
+        :param sentences: The sentences iterable can be simply a list.
+            Each sentence is a list of words (unicode strings)
+            that will be used for training.
+        :type sentences: str or other type of iterables
+        :rtype: a trained gensim.model.Word2Vec
         """
-        self.gensim_w2v_model.build_vocab(words, **self.gensim_w2v_kwargs)
+        self.gensim_w2v_model.build_vocab(sentences, **self.gensim_w2v_kwargs)
         return self.gensim_w2v_model, kwargs
 
 
