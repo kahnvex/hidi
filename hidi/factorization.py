@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import collections
 from numpy.random import permutation
+import random
 from sklearn.decomposition import TruncatedSVD
 from hidi.transform import Transform
 
@@ -115,7 +116,7 @@ class W2VBuildDatasetTransform(Transform):
     :param vocabulary_size: top n most frequent items(words)
     :type vocabulary_size: int
     """
-    def __init__(self, vocabulary_size=5000, **w2v_kwargs):
+    def __init__(self, vocabulary_size=50000, **w2v_kwargs):
         self.vocabulary_size = vocabulary_size
         self.w2v_kwargs = w2v_kwargs
 
