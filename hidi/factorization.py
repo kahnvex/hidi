@@ -148,7 +148,42 @@ class W2VBuildDatasetTransform(Transform):
             data.append(index)
         count[0][1] = unk_count
         reverse_dictionary = dict(zip(dictionary.values(), dictionary.keys()))
-        return (data, count, dictionary, reverse_dictionary), kwargs
+        kwargs['reverse_dictionary'] = reverse_dictionary
+        kwargs['item_count'] = count
+        kwargs['vocabulary_size'] = self.vocabulary_size
+        return data, kwargs
+
+
+class W2VGenerateBatchTransform(Transform):
+    def __init__(self, batch_size=8, num_skips=2, skip_window=1, **w2v_kwargs):
+        self.batch_size = batch_size
+        self.skip_window = skip_window
+        self.num_skips = num_skips
+        self.w2v_kwargs = w2v_kwargs
+
+    def transform(self, data, **kwargs):
+        data_index = 0
+        assert self.batch_size % self.num_skips == 0
+        assert self.num_skips <= 2 * self.skip_window
+        batch = np.ndarray(shape=(self.batch_size), dtype=np.int32)
+        labels = np.ndarray(shape=(self.batch_size, 1), dtype=np.int32)
+        span = 2 * self.skip_window + 1
+        buffer = collections.deque(maxlen=span)
+        for _ in range(span):
+            buffer.append(data[data_index])
+            data_index = (data_index + 1) % len(data)
+        for i in range(self.batch_size // self.num_skips):
+            target = self.skip_window
+            targets_to_avoid = [self.skip_window]
+            for j in range(self.num_skips):
+                while target in targets_to_avoid:
+                    target = random.randint(0, span - 1)
+                targets_to_avoid.append(target)
+                batch[i * self.num_skips + j] = buffer[self.skip_window]
+                labels[i * self.num_skips + j, 0] = buffer[target]
+            buffer.append(data[data_index])
+            data_index = (data_index + 1) % len(data)
+        return (batch, labels), kwargs
 
 
 class SkLearnTransform(Transform):
