@@ -106,7 +106,7 @@ class W2VGensimToDFTransform(Transform):
         for key in self.model.wv.vocab.keys():
             index.append(key)
             embeddings.append(self.model[key])
-        embeddings = pd.Dataframe(embeddings, index=index)
+        embeddings = pd.DataFrame(embeddings, index=index)
         return embeddings, kwargs
 
 
