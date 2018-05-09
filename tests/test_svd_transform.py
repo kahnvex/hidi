@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 
-from hidi.matrix import SVDTransform
+from hidi.factorization import SVDTransform
 
 
 class TestDataLoader(unittest.TestCase):

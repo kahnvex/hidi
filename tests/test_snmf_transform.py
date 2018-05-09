@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 
-from hidi.matrix import SNMFTransform
+from hidi.factorization import SNMFTransform
 
 
 class TestDataLoader(unittest.TestCase):
