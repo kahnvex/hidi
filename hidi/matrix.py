@@ -4,6 +4,7 @@ import types
 
 from hidi.transform import Transform
 from hidi.linalg import dot
+from pandas.api.types import CategoricalDtype
 from pyvalid import accepts
 from scipy.sparse import csr_matrix
 from sklearn.model_selection import train_test_split, KFold, StratifiedKFold
@@ -142,8 +143,8 @@ class SparseTransform(Transform):
         item_u = list(df.item_id.unique())
         data = df.score.as_matrix()
 
-        row = df.link_id.astype('category', categories=link_u).cat.codes
-        col = df.item_id.astype('category', categories=item_u).cat.codes
+        row = df.link_id.astype(CategoricalDtype(categories=link_u)).cat.codes
+        col = df.item_id.astype(CategoricalDtype(categories=item_u)).cat.codes
 
         outshape = (len(link_u), len(item_u))
         in_tuple = (data, (row, col))
